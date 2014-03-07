@@ -1,20 +1,26 @@
 """HTTP requests library (utterly incomplete!)"""
 
-from urllib import urlencode
-from urllib2 import (Request, urlopen)
+try:
+    # Python 2
+    from urllib import urlencode
+    from urllib2 import (Request, urlopen)
+except ImportError:
+    # Python 3
+    from urllib.parse import urlencode
+    from urllib.request import (Request, urlopen)
 
 
 class ParametersError(Exception):
     """Error for invalid parameters in request."""
     def __init__(self, request_type):
-        msg = 'Invalid parameter in %s request.' % request_type
+        msg = 'Invalid parameter in {0} request.'.format(request_type)
         return super(ParametersError, self).__init__(msg)
 
 
 class DefaultParametersError(Exception):
     """Error for missing parameters in request."""
     def __init__(self, request_type):
-        msg = 'No default parameter for this %s request.' % request_type
+        msg = 'No default parameter for this {0} request.'.format(request_type)
         return super(ParametersError, self).__init__(msg)
 
 
@@ -69,8 +75,8 @@ class POST_request(object):
         else:
             values = kwargs
         values = {v: values[v] for v in values if values[v]}
-        print values
         data = urlencode(values)
+        data = data.encode('utf-8')
         req = Request(self.base_url, data)
         response = urlopen(req)
 
