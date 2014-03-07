@@ -68,7 +68,8 @@ class POST_request(object):
                     values[kw] = kwargs[kw]
         else:
             values = kwargs
-
+        values = {v: values[v] for v in values if values[v]}
+        print values
         data = urlencode(values)
         req = Request(self.base_url, data)
         response = urlopen(req)
